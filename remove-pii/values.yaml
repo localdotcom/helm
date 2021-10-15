@@ -2,7 +2,7 @@
 namespace: bitbucket
 serviceAccount:
   role: arn:aws:iam::773369453641:role/sophia-remove-pii
-schedule: "35 14 * * *"
+schedule: "34 16 * * *"
 successfulJobsHistoryLimit: 0
 failedJobsHistoryLimit: 1
 restartPolicy: OnFailure
@@ -30,7 +30,7 @@ initContainers:
       path: /tmp/job
   # remove pii
   - name: removePii
-    command: /tmp/script/remove-pii.sh
+    command: /tmp/scripts/remove-pii.sh
     volumeMounts:
     - name: job 
       path: /tmp/job
@@ -50,7 +50,7 @@ initContainers:
       path: /tmp/job
   # prepare dev dataset
   - name: prepareDevDataset
-    command: /tmp/script/prepare-dev-dataset.sh
+    command: /tmp/scripts/prepare-dev-dataset.sh
     volumeMounts:
     - name: job 
       path: /tmp/job
