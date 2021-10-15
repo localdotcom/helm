@@ -1,0 +1,86 @@
+# cronjob common settings
+namespace: bitbucket
+serviceAccount:
+  role: arn:aws:iam::773369453641:role/sophia-remove-pii
+schedule: "35 14 * * *"
+successfulJobsHistoryLimit: 0
+failedJobsHistoryLimit: 1
+restartPolicy: OnFailure
+containers:
+  name: finalizer
+  image: busybox
+  pullPolicy: IfNotPresent
+initContainers:
+  # init containers common settings
+  images:
+  - name: psql
+    container: 773369453641.dkr.ecr.us-east-1.amazonaws.com/remove-pii:latest
+  - name: rails
+    container: 773369453641.dkr.ecr.us-east-1.amazonaws.com/sophia:latest
+  pullPolicy: Always
+  # init containers definition
+  definitions:
+  # load db dump
+  - name: loadDbDump
+    command: ./load-db-dump.sh
+    volumeMounts:
+    - name: dumps
+      path: /mnt/dumps
+    - name: job
+      path: /tmp/job
+  # remove pii
+  - name: removePii
+    command: /tmp/script/remove-pii.sh
+    volumeMounts:
+    - name: job 
+      path: /tmp/job
+    - name: db-config
+      path: /home/sophia/sophia/config/database.yml
+      subPath: database.yml
+    - name: scripts
+      path: /tmp/scripts/remove-pii.sh
+      subPath: remove-pii.sh
+  # upload dump without pii
+  - name: uploadDumpWithoutPii
+    command: ./upload-dump-without-pii.sh
+    volumeMounts:
+    - name: dumps
+      path: /mnt/dumps
+    - name: job
+      path: /tmp/job
+  # prepare dev dataset
+  - name: prepareDevDataset
+    command: /tmp/script/prepare-dev-dataset.sh
+    volumeMounts:
+    - name: job 
+      path: /tmp/job
+    - name: db-config
+      path: /home/sophia/sophia/config/database.yml
+      subPath: database.yml
+    - name: scripts
+      path: /tmp/scripts/prepare-dev-dataset.sh
+      subPath: prepare-dev-dataset.sh
+  # upload dev dump
+  - name: uploadDevDump
+    command: ./upload-dev-dump.sh
+    volumeMounts:
+    - name: dumps
+      path: /mnt/dumps
+    - name: job
+      path: /tmp/job
+# environment variables
+env:
+- name: LATEST_FILE
+  value: production_sophia_LATEST
+- name: SRC_BUCKET
+  value: sophia-db-backup
+- name: DST_BUCKET
+  value: sophia-dumps-without-pii
+- name: DB_USER
+  value: sophia_remove_pii
+- name: DB_NAME
+  value: sophia_remove_pii
+- name: DB_HOST
+  value: db-testing.czadkgtmhhky.us-east-1.rds.amazonaws.com
+- name: RAILS_ENV
+  value: test
