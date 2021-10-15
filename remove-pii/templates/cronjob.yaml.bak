@@ -20,23 +20,23 @@ spec:
             - echo
             - "Job finished"
           initContainers:
-          {{- range .Values.initContainers.definitions }}
-          - name: {{ .name | kebabcase }}
-          {{- if or (eq .name "loadDbDump") (eq .name "uploadDumpWithoutPii") (eq .name "uploadDevDump") }}
+          {{- range $initContainers, $container := .Values.initContainers.definitions }}
+          - name: {{ $initContainers | kebabcase }}
+          {{- if or (eq $initContainers "loadDbDump") (eq $initContainers "uploadDumpWithoutPii") (eq $initContainers "uploadDevDump") }}
             image: {{ (index $.Values.initContainers.images 0).container }}
           {{- else }}
             image: {{ (index $.Values.initContainers.images 1).container }}
           {{- end }}
             imagePullPolicy: {{ $.Values.initContainers.pullPolicy }}
             command:
-            - {{ .command }}
+            - {{ $container.command }}
             envFrom:
             - secretRef:
                 name: {{ $.Chart.Name }}
             - configMapRef:
                 name: {{ $.Chart.Name }}
             volumeMounts:
-          {{- range .volumeMounts }}
+          {{- range $container.volumeMounts }}
             - name: {{ .name }}
               mountPath: {{ .path }}
           {{- if .subPath }}
