@@ -1,9 +1,8 @@
 # cronjob common settings
-namespace: bitbucket
 serviceAccount:
   role: arn:aws:iam::773369453641:role/sophia-remove-pii
-schedule: "34 16 * * *"
-successfulJobsHistoryLimit: 0
+schedule: "0 9 * * *"
+successfulJobsHistoryLimit: 1
 failedJobsHistoryLimit: 1
 restartPolicy: OnFailure
 containers:

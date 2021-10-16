@@ -2,7 +2,7 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: {{ .Chart.Name }}
-  namespace: {{ .Values.namespace }}
+  namespace: {{ template "chart.namespace" . }}
 spec:
   schedule: {{ .Values.schedule }}
   successfulJobsHistoryLimit: {{ .Values.successfulJobsHistoryLimit }}
