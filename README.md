@@ -59,4 +59,3 @@ helm secrets uninstall -n <%namespace%> <%release_name%>
 https://helm.sh/docs/intro/install/
 ### Helm secrets plugin
 https://github.com/jkroepke/helm-secrets/blob/main/README.md
->>>>>>> 5ae1e622e8ddec8c8c166d2aa383403f95cc137e
