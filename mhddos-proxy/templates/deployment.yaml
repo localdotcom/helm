@@ -1,7 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  # name: {{ include "mhddos-proxy.fullname" . }}
   name: {{ include "mhddos-proxy.fullname" . }}
   labels:
     {{- include "mhddos-proxy.labels" . | nindent 4 }}
