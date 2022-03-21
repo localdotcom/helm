@@ -1,23 +1,22 @@
-replicaCount: 10
+# Can't be more than 12 replicas total due to the current resource limits
+replicaCount: 6
 
 # Type of DDoS attack (http (ip+port), https (url), tcp, udp)
-type: http
+type: tcp
 
 # A list of targets
-# targets: https://pastebin.com/raw/Sg5GD5wU # tcp
-targets: https://pastebin.com/raw/V5ZA8qv6 # http
+targets: https://pastebin.com/raw/9yviUHBj
 
-# Threads per CPU core (Default is 300. Total amount = threads*replicaCount)
-threads: 300
+# Total number of threads to run (default is CPU * 1000)
+threads: 1000
 
 # How often to update the proxies (Default is 900)
-period: 1200
+period_update: 900
 
 # How many requests to send on a single proxy connection (default is 2000)
-# tcp -> rpc = 1000
-# http -> rpc = 100
-requests: 100
+requests_per_proxy: 2000
 
+# Uses for HTTP/HTTP(S) attack types only! Leave this parameter blanc for TCP/UDP.
 # List of HTTP(s) attack methods to use. (Default is GET, POST, STRESS, BOT, PPS)
 # Refer to MHDDoS docs for available options (https://github.com/MHProDev/MHDDoS)
 methods: ""
@@ -39,10 +38,11 @@ nodeSelector: {}
 tolerations: []
 affinity: {}
 
-resources: {}
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+resources:
+  # {}
+  requests:
+    cpu: 2
+    memory: 8Gi
+  limits:
+    cpu: 3
+    memory: 10Gi

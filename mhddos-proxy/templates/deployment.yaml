@@ -32,12 +32,12 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- if or (eq .Values.type "tcp") (eq .Values.type "udp") }}
-          args: ["-c {{ .Values.targets }}", "-t {{ .Values.threads }}", "-p {{ .Values.period }}", "--rpc", "{{ .Values.requests }}", "--debug"]
+          args: ["-c {{ .Values.targets }}", "-t {{ .Values.threads }}", "-p {{ .Values.period_update }}", "--rpc", "{{ .Values.requests_per_proxy }}", "--debug"]
           {{- else if or (eq .Values.type "http") (eq .Values.type "https") }}
           {{- if eq .Values.methods "" }}
-          args: ["-c {{ .Values.targets }}", "-t {{ .Values.threads }}", "-p {{ .Values.period }}", "--rpc", "{{ .Values.requests }}", "--debug"]
+          args: ["-c {{ .Values.targets }}", "-t {{ .Values.threads }}", "-p {{ .Values.period_update }}", "--rpc", "{{ .Values.requests_per_proxy }}", "--debug"]
           {{- else }}
-          args: ["-c {{ .Values.targets }}", "-t {{ .Values.threads }}", "-p {{ .Values.period }}", "--rpc", "{{ .Values.requests }}", "--debug", "--http-methods", "{{ .Values.methods }}"]
+          args: ["-c {{ .Values.targets }}", "-t {{ .Values.threads }}", "-p {{ .Values.period_update }}", "--rpc", "{{ .Values.requests_per_proxy }}", "--debug", "--http-methods", "{{ .Values.methods }}"]
           {{- end }}
           {{- end }}
           resources:
