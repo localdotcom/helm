@@ -9,8 +9,7 @@ type: tcp
 targets: https://rentry.co/5c3a3/raw
 
 # Total number of threads to run (default is CPU * 1000)
-# max_threads = (pod_cpu_request * amount_of_targets) * 1000
-threads: 32000
+threads: 30000
 
 # How often to update the proxies (Default is 900)
 period_update: 900
@@ -43,8 +42,8 @@ affinity: {}
 resources:
   # {}
   requests:
-    cpu: 4
+    cpu: 2
     memory: 4Gi
   limits:
-    cpu: 4
+    cpu: 2
     memory: 4Gi
