@@ -1,14 +1,16 @@
-# Can't be more than 12 replicas total due to the current resource limits
-replicaCount: 6
+name: mhddos-proxy
 
-# Type of DDoS attack (http (ip+port), https (url), tcp, udp)
+replicaCount: 8
+
+# Type of DDoS attack: url, ipport (ip+port), tcp, udp
 type: tcp
 
 # A list of targets
-targets: https://pastebin.com/raw/9yviUHBj
+targets: https://rentry.co/5c3a3/raw
 
 # Total number of threads to run (default is CPU * 1000)
-threads: 1000
+# max_threads = (pod_cpu_request * amount_of_targets) * 1000
+threads: 32000
 
 # How often to update the proxies (Default is 900)
 period_update: 900
@@ -41,8 +43,8 @@ affinity: {}
 resources:
   # {}
   requests:
-    cpu: 2
-    memory: 8Gi
+    cpu: 4
+    memory: 4Gi
   limits:
-    cpu: 3
-    memory: 10Gi
+    cpu: 4
+    memory: 4Gi

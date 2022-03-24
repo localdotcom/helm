@@ -19,8 +19,7 @@ parse_yaml() {
 # read yaml file
 eval $(parse_yaml values.yaml "config_")
 
-namespace="mhddos-proxy"
-command="helm upgrade --install --create-namespace --namespace=${namespace}  -f values.yaml mhddos-proxy-${config_type} ."
+command="helm upgrade --install --create-namespace --namespace=${config_name}  -f values.yaml ${config_name}-${config_type} ."
 
 # deploy chart
 eval $command

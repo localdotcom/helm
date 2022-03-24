@@ -19,8 +19,7 @@ parse_yaml() {
 # read yaml file
 eval $(parse_yaml values.yaml "config_")
 
-namespace="mhddos-proxy"
-command="helm uninstall mhddos-proxy-${config_type} -n ${namespace}"
+command="helm uninstall ${config_name}-${config_type} -n ${config_name}"
 
-# deploy chart
+# uninstall chart
 eval $command
