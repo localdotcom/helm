@@ -9,13 +9,13 @@ type: tcp
 targets: https://rentry.co/5c3a3/raw
 
 # Total number of threads to run (default is CPU * 1000)
-threads: 32000
+threads: 15000
 
 # How often to update the proxies (Default is 900)
 period_update: 900
 
 # How many requests to send on a single proxy connection (default is 2000)
-requests_per_proxy: 2000
+requests_per_proxy: 1000
 
 # Uses for HTTP/HTTP(S) attack types only! Leave this parameter blanc for TCP/UDP.
 # List of HTTP(s) attack methods to use. (Default is GET, POST, STRESS, BOT, PPS)
@@ -40,10 +40,10 @@ tolerations: []
 affinity: {}
 
 resources:
-  # {}
-  requests:
-    cpu: 4
-    memory: 4Gi
-  limits:
-    cpu: 4
-    memory: 4Gi
+  {}
+  # requests:
+  #   cpu: 4
+  #   memory: 2Gi
+  # limits:
+  #   cpu: 7
+  #   memory: 4Gi
