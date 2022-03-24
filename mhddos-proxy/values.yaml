@@ -1,6 +1,6 @@
 name: mhddos-proxy
 
-replicaCount: 8
+replicaCount: 4
 
 # Type of DDoS attack: url, ipport (ip+port), tcp, udp
 type: tcp
@@ -9,7 +9,7 @@ type: tcp
 targets: https://rentry.co/5c3a3/raw
 
 # Total number of threads to run (default is CPU * 1000)
-threads: 30000
+threads: 32000
 
 # How often to update the proxies (Default is 900)
 period_update: 900
@@ -42,8 +42,8 @@ affinity: {}
 resources:
   # {}
   requests:
-    cpu: 2
+    cpu: 4
     memory: 4Gi
   limits:
-    cpu: 2
+    cpu: 4
     memory: 4Gi
