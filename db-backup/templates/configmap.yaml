@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}
+  namespace: {{ .Release.Namespace }}
+data:
+{{- range .Values.env }}
+{{- if eq .name "POSTGRES_DB" }}
+  {{ .name }}: {{ printf "%s_%s" .value $.Release.Namespace }}
+{{- else}}
+{{- if eq .name "S3_FOLDER"  }}
+  {{ .name }}: {{ $.Release.Namespace }}
+{{- else}}
+  {{ .name }}: {{ .value }}
+{{- end}}
+{{- end}}
+{{- end}}
+{{ (.Files.Glob "scripts/*").AsConfig | indent 2 }}

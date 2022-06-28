@@ -7,5 +7,5 @@ data:
 {{- range .Values.env }}
   {{ .name }}: {{ .value }}
 {{- end}}
-{{ (.Files.Glob "config/database.yml").AsConfig | indent 2 }}
+# {{ (.Files.Glob "config/database.yml").AsConfig | indent 2 }}
 {{ (.Files.Glob "scripts/*").AsConfig | indent 2 }}

@@ -1,22 +1,20 @@
-name: mhddos-proxy
+name: mhddos
+context: "arn:aws:eks:eu-north-1:581171148802:cluster/eks-db1000n"
+# context: "arn:aws:eks:us-east-1:772390762540:cluster/eks-FreeTier"
 
-replicaCount: 4
-
-# Type of DDoS attack: url, ipport (ip+port), tcp, udp
-type: tcp
+replicaCount: 18
 
 # A list of targets
-targets: https://rentry.co/5c3a3/raw
+targets: https://rentry.co/5tu65f/raw
 
 # Total number of threads to run (default is CPU * 1000)
-threads: 15000
-
+threads: 10000
 # How often to update the proxies (Default is 900)
-period_update: 900
-
+period: 1200
 # How many requests to send on a single proxy connection (default is 2000)
-requests_per_proxy: 1000
-
+rpc: 2000
+# How many seconds to wait for the proxy to make a connection (default is 5)
+proxy_timeout: "15"
 # Uses for HTTP/HTTP(S) attack types only! Leave this parameter blanc for TCP/UDP.
 # List of HTTP(s) attack methods to use. (Default is GET, POST, STRESS, BOT, PPS)
 # Refer to MHDDoS docs for available options (https://github.com/MHProDev/MHDDoS)
@@ -40,10 +38,10 @@ tolerations: []
 affinity: {}
 
 resources:
-  {}
+  # {}
   # requests:
-  #   cpu: 4
-  #   memory: 2Gi
-  # limits:
-  #   cpu: 7
-  #   memory: 4Gi
+    # cpu: 2048m
+    # memory: 2Gi
+  limits:
+    cpu: 2048m
+    # memory: 4Gi

@@ -19,7 +19,7 @@ parse_yaml() {
 # read yaml file
 eval $(parse_yaml values.yaml "config_")
 
-command="helm upgrade --install --create-namespace --namespace=${config_name}  -f values.yaml ${config_name}-${config_type} ."
+command="helm --kube-context ${config_context} upgrade --install --create-namespace --namespace=${config_name}  -f values.yaml ${config_name} ."
 
 # deploy chart
 eval $command

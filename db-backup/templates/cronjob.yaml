@@ -1,0 +1,40 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Chart.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  schedule: {{ .Values.schedule | quote }}
+  successfulJobsHistoryLimit: {{ .Values.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.failedJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      backoffLimit: 3
+      template:
+        spec:
+          containers:
+          - name: {{ .Values.containers.name }}
+            image: {{ .Values.containers.image }}
+            imagePullPolicy: {{ .Values.containers.pullPolicy }}
+            command:
+            - {{ .Values.containers.command }}
+            envFrom:
+            - secretRef:
+                name: {{ $.Chart.Name }}
+            - configMapRef:
+                name: {{ $.Chart.Name }}
+            volumeMounts:
+          {{- range .Values.containers.volumeMounts }}
+            - name: {{ .name }}
+              mountPath: {{ .path }}
+          {{- if .subPath }}
+              subPath: {{ .subPath }}
+          {{- end }}
+          {{- end }}
+          volumes:
+          - name: scripts
+            configMap:
+              name: {{ .Chart.Name }}
+              defaultMode: 0777
+          serviceAccountName: {{ .Chart.Name }}
+          restartPolicy: {{ .Values.restartPolicy }}

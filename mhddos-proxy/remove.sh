@@ -19,7 +19,7 @@ parse_yaml() {
 # read yaml file
 eval $(parse_yaml values.yaml "config_")
 
-command="helm uninstall ${config_name}-${config_type} -n ${config_name}"
+command="helm --kube-context ${config_context} uninstall ${config_name} -n ${config_name}"
 
 # uninstall chart
 eval $command

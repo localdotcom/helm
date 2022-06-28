@@ -1,14 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "mhddos-proxy.fullname" . }}
+  name: {{ include ".Values.name.fullname" . }}
   labels:
-    {{- include "mhddos-proxy.labels" . | nindent 4 }}
+    {{- include ".Values.name.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "mhddos-proxy.selectorLabels" . | nindent 6 }}
+      {{- include ".Values.name.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -16,7 +16,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "mhddos-proxy.selectorLabels" . | nindent 8 }}
+        {{- include ".Values.name.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -30,14 +30,10 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          {{- if or (eq .Values.type "tcp") (eq .Values.type "udp") }}
-          args: ["-c {{ .Values.targets }}", "-t {{ .Values.threads }}", "-p {{ .Values.period_update }}", "--rpc", "{{ .Values.requests_per_proxy }}", "--debug"]
-          {{- else if or (eq .Values.type "url") (eq .Values.type "ipport") }}
           {{- if eq .Values.methods "" }}
-          args: ["-c {{ .Values.targets }}", "-t {{ .Values.threads }}", "-p {{ .Values.period_update }}", "--rpc", "{{ .Values.requests_per_proxy }}", "--debug"]
+          args: ["-c {{ .Values.targets }}", "-t {{ .Values.threads }}", "-p {{ .Values.period }}", "--rpc", "{{ .Values.rpc }}", "--proxy-timeout", "{{ .Values.proxy_timeout }}", "--debug"]
           {{- else }}
-          args: ["-c {{ .Values.targets }}", "-t {{ .Values.threads }}", "-p {{ .Values.period_update }}", "--rpc", "{{ .Values.requests_per_proxy }}", "--debug", "--http-methods", "{{ .Values.methods }}"]
-          {{- end }}
+          args: ["-c {{ .Values.targets }}", "-t {{ .Values.threads }}", "-p {{ .Values.period }}", "--rpc", "{{ .Values.rpc }}", "--proxy-timeout", "{{ .Values.proxy_timeout }}", "--debug", "--http-methods", "{{ .Values.methods }}"]
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
