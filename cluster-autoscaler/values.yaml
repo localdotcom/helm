@@ -8,8 +8,7 @@ replicaCount: 1
 image:
   repository: k8s.gcr.io/autoscaling/cluster-autoscaler
   pullPolicy: Always
-  # tag: "v1.21.2"
-  tag: "v1.23.1"
+  tag: "v1.22.3"
 
 nameOverride: ""
 fullnameOverride: ""
