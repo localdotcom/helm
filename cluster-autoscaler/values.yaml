@@ -9,6 +9,7 @@ image:
   repository: k8s.gcr.io/autoscaling/cluster-autoscaler
   pullPolicy: Always
   tag: "v1.21.2"
+  tag: "v1.23.1"
 
 nameOverride: ""
 fullnameOverride: ""
