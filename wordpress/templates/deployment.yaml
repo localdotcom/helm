@@ -1,0 +1,108 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "wordpress.fullname" . }}
+  labels:
+    {{- include "wordpress.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "wordpress.selectorLabels" . | nindent 6 }}
+  strategy:
+    {{- toYaml .Values.deployment.strategy | nindent 4 }}
+  template:
+    metadata:
+      labels:
+        {{- include "wordpress.selectorLabels" . | nindent 8 }}
+      annotations: 
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        # application
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.deployment.app.image.repository | required "deployment.app.image.repository is not set" }}:{{ .Values.deployment.app.image.tag | required "deployment.app.image.tag is not set" }}"
+          imagePullPolicy: {{ .Values.deployment.app.image.pullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "wordpress.fullname" . }}
+            - secretRef:
+                name: {{ include "wordpress.fullname" . }}
+          resources:
+            {{- toYaml .Values.deployment.app.resources | nindent 12 }}
+          volumeMounts:
+            - name: shared-files
+              mountPath: /var/www/html
+            {{- if .Values.pvc.enabled }}
+            - name: {{ .Values.pvc.volume.name }}
+              mountPath: "{{ .Values.pvc.volume.mountPath }}/{{ .Values.pvc.volume.name }}"
+            {{- end }}
+          lifecycle:
+            # give k8s controller time to phase pod out of service
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 30"]
+            # Important! After this container has started, the PHP files
+            # in our Docker image aren't in the shared volume. We need to 
+            # get them into the shared volume. If we tried to write directly
+            # to this volume from our Docker image the files wouldn't appear
+            # in the nginx container.
+            #
+            # So, after the container has started, copy the PHP files from this
+            # container's local filesystem (/app -- added via the Docker image) 
+            # to the shared volume, which is mounted at /var/www/html.
+            postStart:
+              exec:
+                command: 
+                  - /bin/sh
+                  - -c
+                  - |
+                    cp -r /usr/src/html/. /var/www/html/
+                    chown -R www-data:www-data /var/www/html/
+        # nginx
+        - name: nginx
+          image: "{{ .Values.deployment.nginx.image.repository | required "deployment.nginx.image.repository is not set" }}:{{ .Values.deployment.nginx.image.tag | required "deployment.nginx.image.tag is not set" }}"
+          imagePullPolicy: {{ .Values.deployment.nginx.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.deployment.nginx.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.deployment.nginx.httpGet.path }}
+              port: http
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.deployment.nginx.httpGet.path }}
+              port: http
+          volumeMounts:
+            - name: shared-files
+              mountPath: /var/www/html
+            - name: nginx-conf
+              mountPath: /etc/nginx/conf.d
+            {{- if .Values.pvc.enabled }}
+            - name: {{ .Values.pvc.volume.name }}
+              mountPath: "{{ .Values.pvc.volume.mountPath }}/{{ .Values.pvc.volume.name }}"
+            {{- end }}
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 20 && /usr/sbin/nginx -s quit"]
+      volumes:
+        - name: shared-files
+          emptyDir: {}
+        - name: nginx-conf
+          configMap:
+            name: {{ include "wordpress.fullname" . }}-nginx
+        {{- if .Values.pvc.enabled }}
+        - name: {{ .Values.pvc.volume.name }}
+          persistentVolumeClaim:
+            claimName: "{{ include "wordpress.fullname" . }}-{{ .Values.pvc.volume.name }}"
+        {{- end}}
+      terminationGracePeriodSeconds: 120

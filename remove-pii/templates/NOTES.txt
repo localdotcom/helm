@@ -1,6 +1,0 @@
-You have deployed the following release: {{ .Release.Name }}
-
-To get further information, you can run the commands:
-
-  $ helm -n {{ .Release.Namespace }} status {{ .Release.Name }}
-  $ helm -n {{ .Release.Namespace }} get all {{ .Release.Name }}

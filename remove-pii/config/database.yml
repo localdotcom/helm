@@ -1,7 +1,0 @@
-test:
-  adapter: postgresql
-  database: <%= ENV.fetch("DB_NAME") %>
-  host: <%= ENV.fetch("DB_HOST") %>
-  user: <%= ENV.fetch("DB_USER") %>
-  password: <%= ENV.fetch("PGPASSWORD") %>
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 1 } %>

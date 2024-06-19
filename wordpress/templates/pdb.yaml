@@ -1,0 +1,11 @@
+{{- if contains "production" .Release.Name }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "wordpress.fullname" . }}
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      {{- include "wordpress.selectorLabels" . | nindent 6 }}
+{{ end }}

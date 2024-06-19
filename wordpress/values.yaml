@@ -1,0 +1,80 @@
+# Default values for wordpress.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+deployment:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 50%
+  app:
+    image:
+      repository: ""
+      tag: ""
+      pullPolicy: IfNotPresent
+    resources:
+      limits:
+        cpu: 1
+        memory: 1024Mi
+      requests:
+        cpu: 30m
+        memory: 200Mi
+  nginx:
+    image:
+      repository: "nginx"
+      tag: "latest"
+      pullPolicy: IfNotPresent
+    httpGet:
+      path: /wQVzcKoVd0hOVWEXniTkLHM59aMw8HnA.php
+    resources:
+      limits:
+        cpu: 50m
+        memory: 150Mi
+      requests:
+        cpu: 10m
+        memory: 50Mi
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations: []
+  hosts: []
+  tls: []
+
+hpa:
+  enabled: false
+  minReplicaCount: 2
+  maxReplicaCount: 5
+
+cronjob:
+  enabled: true
+
+pvc:
+  enabled: false
+  volume:
+    name: ""
+    mountPath: ""
+
+newrelic-agent:
+  enabled: true
+
+redis:
+  enabled: true
+  architecture: standalone
+  auth:
+    enabled: false
+  replica:
+    replicaCount: 0
+
+env: []

@@ -1,0 +1,25 @@
+{{- if .Values.cronjob.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: wp-cron
+spec:
+  schedule: "*/5 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: wp-cron
+              image: "{{ .Values.deployment.app.image.repository }}:{{ .Values.deployment.app.image.tag }}"
+              envFrom:
+                - configMapRef:
+                    name: {{ include "wordpress.fullname" . }}
+                - secretRef:
+                    name: {{ include "wordpress.fullname" . }}
+              command:
+                - /bin/sh
+                - -c
+                - /usr/src/html/bin/run-wp-cron
+          restartPolicy: OnFailure
+{{- end }}
