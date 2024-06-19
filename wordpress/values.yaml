@@ -16,8 +16,8 @@ deployment:
       maxUnavailable: 50%
   app:
     image:
-      repository: ""
-      tag: ""
+      repository: dclocal/php-wordpress-newrelic
+      tag: php8.1
       pullPolicy: IfNotPresent
     resources:
       limits:
